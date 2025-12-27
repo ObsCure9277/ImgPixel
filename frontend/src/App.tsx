@@ -4,8 +4,8 @@ import ImageUpload from "./components/ImageUpload";
 import ImageComparison from "./components/ImageComparison";
 import { useState } from "react";
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_API_URL || "http://localhost:5000";
-
+const API_BASE_URL = "http://localhost:5000";
+//process.env.REACT_APP_BACKEND_API_URL
 function App() {
   const [exportOptions, setExportOptions] = useState<{
     format: string;
@@ -153,22 +153,6 @@ function App() {
               exportOptions={exportOptions}
               disabled={!processedImageUrl}
             />
-          </div>
-
-          {/* Feature List */}
-          <div className="features">
-            <div className="feature-item">
-              <span className="feature-icon">✓</span>
-              <span>High-quality AI removal</span>
-            </div>
-            <div className="feature-item">
-              <span className="feature-icon">✓</span>
-              <span>Up to 4K resolution</span>
-            </div>
-            <div className="feature-item">
-              <span className="feature-icon">✓</span>
-              <span>Multiple export formats</span>
-            </div>
           </div>
         </aside>
 
