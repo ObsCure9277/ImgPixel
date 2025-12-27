@@ -1,6 +1,6 @@
 # ImgPixel - AI Background Remover
 
-A powerful desktop application that automatically removes backgrounds from images using **U²-NET** deep learning. Built with **Electron**, **React**, **TypeScript**, and **Python** for a seamless and efficient user experience.
+A powerful website that automatically removes backgrounds from images using **U²-NET** deep learning. Built with **React**, **TypeScript**, and **Python** for a seamless and efficient user experience.
 
 <img width="1889" height="950" alt="imgPixel_1" src="https://github.com/user-attachments/assets/546fd32c-39e3-4566-b4a7-4e7148dabd87" />
 <img width="1889" height="948" alt="imgPixel_2" src="https://github.com/user-attachments/assets/326ecc82-24de-4447-938a-c4c0ded98d46" />
@@ -34,8 +34,8 @@ A powerful desktop application that automatically removes backgrounds from image
     </td>
     <td>
       <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
-      <img src="https://img.shields.io/badge/Electron-47848F?style=for-the-badge&logo=electron&logoColor=white" />
       <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" />
+      <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
     </td>
   </tr>
   <tr>
@@ -45,6 +45,8 @@ A powerful desktop application that automatically removes backgrounds from image
     <td>
       <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue" />
       <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white" />
+      <img src="https://img.shields.io/badge/Numpy-777BB4?style=for-the-badge&logo=numpy&logoColor=white" />
+      <img src="https://img.shields.io/badge/fastapi-109989?style=for-the-badge&logo=FASTAPI&logoColor=white" />
     </td>
   </tr>
 </table>
