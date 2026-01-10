@@ -25,9 +25,9 @@ app.add_middleware(
 )
 
 # Create directories
-UPLOAD_DIR = Path("src/uploads")
-OUTPUT_DIR = Path("src/outputs")
-MODELS_DIR = Path("src/models")
+UPLOAD_DIR = Path("uploads")
+OUTPUT_DIR = Path("outputs")
+MODELS_DIR = Path("models")
 
 for directory in [UPLOAD_DIR, OUTPUT_DIR, MODELS_DIR]:
     directory.mkdir(parents=True, exist_ok=True)
