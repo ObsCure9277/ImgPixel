@@ -61,3 +61,4 @@ database.db
 src/data/
 src/setup_dataset.py
 src/train.py
+src/runs/
