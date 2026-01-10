@@ -56,3 +56,8 @@ credentials.json
 database.db
 *.sqlite
 *.sqlite3
+
+# Dataset setup and training scripts
+src/data/
+src/setup_dataset.py
+src/train.py
