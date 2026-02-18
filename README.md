@@ -3,8 +3,10 @@
 
 **ImgPixel** is a powerful web application for AI-powered background removal using the U²-Net deep learning model. Built with React, TypeScript, and FastAPI, it offers a privacy-first solution where all image processing happens locally on your machine.
 
+<img width="1875" height="953" alt="Screenshot 2025-12-28 052340" src="https://github.com/user-attachments/assets/28aac1b1-30fb-4187-8549-6fc5029ad3a7" />
 
 ---
+
 
 ## 📋 Table of Contents
 
