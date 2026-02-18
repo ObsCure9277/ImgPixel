@@ -221,3 +221,8 @@ This project is open source and available under the [MIT License](LICENSE).
 
 - [U²-Net: Going Deeper with Nested U-Structure for Salient Object Detection](https://github.com/xuebinqin/U-2-Net) by Xuebin Qin et al.
 - The open source communities behind FastAPI, React, and PyTorch.
+
+---
+
+**Made with ❤️ by [ObsCure9277](https://github.com/ObsCure9277)**
+
