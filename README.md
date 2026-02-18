@@ -1,122 +1,162 @@
-# ImgPixel
+# 🖼️ ImgPixel
 
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue)
 ![React](https://img.shields.io/badge/react-19.2.0-blue)
 ![TypeScript](https://img.shields.io/badge/typescript-4.9.5-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-latest-009688)
 
-A web application for AI-powered background removal using the U²-Net deep learning model. Built with React, TypeScript, and FastAPI.
+**ImgPixel** is a powerful web application for AI-powered background removal using the U²-Net deep learning model. Built with React, TypeScript, and FastAPI, it offers a privacy-first solution where all image processing happens locally on your machine.
 
-## What It Does
+---
 
-ImgPixel processes images through a U²-Net neural network to segment foregrounds from backgrounds. The frontend handles drag-and-drop uploads and provides side-by-side comparison of results. The backend runs PyTorch inference and serves processed images through a REST API.
+## 🔑 Key Features
 
-The application supports multiple export formats (PNG, JPG, WebP) and resolution scaling while maintaining aspect ratios. All processing happens server-side with optional GPU acceleration.
+### ✅ Privacy-First
+- All image processing happens on your local server. Images never leave your infrastructure, ensuring complete data privacy and security.
 
-## Why It's Useful
+### ✅ Production-Ready
+- Powered by a robust FastAPI backend with proper error handling, file validation, and automatic temporary file cleanup to keep your storage managed.
 
-- **Privacy-First**: All image processing happens on your own server - images never leave your infrastructure
-- **Production-Ready**: FastAPI backend with proper error handling, file validation, and automatic cleanup
-- **Flexible Export**: Choose from multiple formats and resolutions (Original, HD, Full HD, 4K)
-- **GPU Accelerated**: Automatic CUDA detection for faster processing when available
-- **Modern UI**: Interactive before/after slider and responsive design for all screen sizes
-- **No API Keys Required**: Self-hosted solution with no external dependencies or rate limits
+### ✅ Flexible Export
+- Choose from multiple export formats (PNG, JPG, WebP) and resolutions (Original, HD, Full HD, 4K) while maintaining aspect ratios.
 
-Perfect for e-commerce product photography, profile picture generation, design workflows, or learning about deep learning deployment.
+### ✅ GPU Accelerated
+- Automatically detects and utilizes NVIDIA GPUs (CUDA) for faster processing, seamlessly falling back to CPU when unavailable.
 
-## Getting Started
+### ✅ Modern UI
+- Features a clean, responsive interface with drag-and-drop uploads and an interactive before/after comparison slider to verify results instantly.
+
+### ✅ No API Keys Required
+- A completely self-hosted solution. No external API subscriptions, rate limits, or hidden costs.
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- **Node.js** 16+ and **npm**
-- **Python** 3.8+
-- **pip** package manager
+Ensure you have the following installed:
+- **Node.js**: v16 or higher
+- **Python**: v3.8 or higher
 - **Git**
 
 ### Installation
 
-1. **Clone the repository**
+1.  **Clone the repository**
 
-```bash
-git clone https://github.com/ObsCure9277/Background-Remover.git
-cd Background-Remover
-```
+    ```bash
+    git clone https://github.com/ObsCure9277/ImgPixel.git
+    cd ImgPixel
+    ```
 
-2. **Download the U²-Net model weights**
+2.  **Download the U²-Net model weights**
 
-```bash
-mkdir -p backend/models
-curl -L -o backend/models/u2net.pth https://github.com/xuebinqin/U-2-Net/releases/download/1.0/u2net.pth
-```
+    Download the pre-trained model (176MB) and place it in the `backend/models` directory:
 
-The model file is 176MB and contains the pre-trained weights.
+    ```bash
+    # Windows (PowerShell)
+    mkdir -Force backend\models
+    curl -L -o backend\models\u2net.pth https://github.com/xuebinqin/U-2-Net/releases/download/1.0/u2net.pth
 
-3. **Set up the backend**
+    # macOS/Linux
+    mkdir -p backend/models
+    curl -L -o backend/models/u2net.pth https://github.com/xuebinqin/U-2-Net/releases/download/1.0/u2net.pth
+    ```
 
-```bash
-cd backend
-python -m venv venv
+3.  **Set up the backend**
 
-# Windows
-venv\Scripts\activate
-# macOS/Linux
-source venv/bin/activate
+    ```bash
+    cd backend
+    python -m venv venv
 
-pip install -r requirements.txt
-```
+    # Windows
+    venv\Scripts\activate
+    # macOS/Linux
+    source venv/bin/activate
 
-4. **Set up the frontend**
+    pip install -r requirements.txt
+    ```
 
-```bash
-cd ../frontend
-npm install
-```
+4.  **Set up the frontend**
+
+    ```bash
+    cd ../frontend
+    npm install
+    ```
 
 ### Running the Application
 
-Open two terminal windows:
+You'll need two terminal windows - one for the backend and one for the frontend.
 
-**Terminal 1 - Backend:**
+**Terminal 1 - Backend Server:**
 
 ```bash
 cd backend
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # macOS/Linux
+# Activate virtual environment (if not already active)
+# Windows: venv\Scripts\activate
+# macOS/Linux: source venv/bin/activate
+
 uvicorn src.main:app --reload --host 0.0.0.0 --port 5000
 ```
-
 Backend runs at `http://localhost:5000`
 
-**Terminal 2 - Frontend:**
+**Terminal 2 - Frontend Dev Server:**
 
 ```bash
 cd frontend
 npm start
 ```
-
 Frontend runs at `http://localhost:3000`
+
+---
+
+## 📂 Project Structure
+
+```
+ImgPixel/
+├── backend/
+│   ├── models/              # Pre-trained U²-Net model weights
+│   ├── outputs/             # Processed images
+│   ├── uploads/             # Temporary uploads
+│   ├── src/
+│   │   ├── main.py                # FastAPI application
+│   │   ├── background_removal.py  # Inference logic
+│   │   ├── u2net_model.py         # Neural network architecture
+│   │   └── ...
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ImageUpload.tsx       # Drag-and-drop area
+│   │   │   ├── ImageComparison.tsx   # Before/after slider
+│   │   │   ├── Export.tsx            # Export options
+│   │   └── App.tsx
+│   └── package.json
+└── README.md
+```
+
+---
+
+## 💡 Usage Examples
 
 ### Basic Usage
 
-1. Open `http://localhost:3000` in your browser
-2. Drag and drop an image or click to upload (PNG, JPG, JPEG, GIF, BMP, WebP)
-3. Select your preferred export format and resolution
-4. Click "Remove Background"
-5. Use the slider to compare original and processed images
-6. Click "Download" to save the result
+1.  Open `http://localhost:3000` in your browser.
+2.  **Upload**: Drag and drop an image or click to select.
+3.  **Configure**: Select your desired format (PNG, JPG, WebP) and resolution.
+4.  **Process**: Click "Remove Background".
+5.  **Download**: Use the slider to compare, then click "Download" to save.
 
 ### API Usage
 
-The backend exposes a REST API for programmatic access:
+You can also use the backend purely as an API:
+
+**Remove background from an image:**
 
 ```bash
-# Remove background from an image
 curl -X POST "http://localhost:5000/api/remove-background" \
   -F "file=@image.jpg" \
   -F "resolution=original"
-
-# Check API health
-curl http://localhost:5000/health
 ```
 
 **Response:**
@@ -128,109 +168,56 @@ curl http://localhost:5000/health
 }
 ```
 
-View the full API documentation at `http://localhost:5000/docs` when the backend is running.
+---
 
-## Project Structure
+## 🛠️ Technical Details
 
-```
-1-ImgPixel/
-├── backend/
-│   ├── models/              # Pre-trained model weights
-│   ├── outputs/             # Processed images
-│   ├── uploads/             # Temporary uploaded images
-│   ├── src/
-│   │   ├── main.py                # FastAPI application
-│   │   ├── background_removal.py  # Image processing logic
-│   │   ├── u2net_model.py         # U²-Net architecture
-│   │   ├── train.py               # Model training script
-│   │   ├── setup_dataset.py       # Dataset preparation
-│   │   └── data/                  # Training datasets
-│   │       ├── images/
-│   │       └── mask/
-│   └── requirements.txt     # Python dependencies
-├── frontend/
-│   ├── public/              # Static assets
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── ImageUpload.tsx       # Drag-and-drop upload
-│   │   │   ├── ImageComparison.tsx   # Before/after slider
-│   │   │   └── Export.tsx            # Export options
-│   │   ├── App.tsx          # Main application
-│   │   ├── App.css          # Styles
-│   │   └── index.css        # Global styles
-│   └── package.json         # Node dependencies
-└── README.md
-```
+### Architecture
+- **Frontend**: React 19, TypeScript, Create React App
+- **Backend**: Python 3.8+, FastAPI
+- **AI Model**: U²-Net (PyTorch)
+- **Image Processing**: Pillow (PIL), NumPy
 
-## Technical Details
+### Model Information
+- **Name**: U²-Net (Nested U-Structure)
+- **Task**: Salient Object Detection
+- **Input Size**: 320x320 (automatically resized)
+- **Output**: Binary probability mask
 
-### Frontend Architecture
+---
 
-The React application uses modern web APIs:
+## 🧠 Training Your Own Model
 
-- [FormData API](https://developer.mozilla.org/en-US/docs/Web/API/FormData) for multipart file uploads
-- [URL.createObjectURL()](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static) for client-side image previews
-- [Drag and Drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API) via [react-dropzone](https://react-dropzone.js.org/)
-- [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/--*) for theming
-- [Flexbox](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout) and [Media Queries](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries/Using_media_queries) for responsive layout
+The repository includes scripts to train the model on your own dataset.
 
-**Key Dependencies:**
-- [React 19.2.0](https://react.dev/) - UI framework
-- [TypeScript 4.9.5](https://www.typescriptlang.org/) - Type safety
-- [@img-comparison-slider/react](https://img-comparison-slider.sneas.io/) - Interactive comparison slider
-- [lucide-react](https://lucide.dev/) - Icon library
+1.  **Prepare Data**: Place images in `backend/src/data/images/` and masks in `backend/src/data/mask/`.
+2.  **Train**:
+    ```bash
+    cd backend
+    python src/train.py
+    ```
+3.  **Visualize**:
+    ```bash
+    tensorboard --logdir=backend/runs
+    ```
 
-### Backend Architecture
+---
 
-The Python backend implements:
+## 📞 Support
 
-- PyTorch model inference with automatic CUDA/CPU device detection
-- Residual U-Net architecture with encoder-decoder structure and skip connections
-- Bilinear upsampling for mask reconstruction
-- Aspect ratio preservation during resolution scaling
-- FastAPI async request handlers with proper error cleanup
-- CORS middleware for cross-origin requests
+- **Issues**: Report bugs or suggest features on [GitHub Issues](https://github.com/ObsCure9277/ImgPixel/issues).
+- **Discussions**: Join the conversation in [GitHub Discussions](https://github.com/ObsCure9277/ImgPixel/discussions).
+- **Docs**: Visit `http://localhost:5000/docs` for interactive API documentation when running the backend.
 
-**Key Dependencies:**
-- [FastAPI](https://fastapi.tiangolo.com/) - Modern async web framework
-- [PyTorch](https://pytorch.org/) - Deep learning inference
-- [Pillow](https://python-pillow.org/) - Image manipulation
-- [NumPy](https://numpy.org/) - Array operations
-- [Uvicorn](https://www.uvicorn.org/) - ASGI server
+---
 
-### Font Stack
+## 📄 License
 
-System fonts: `-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif`
+This project is open source and available under the [MIT License](LICENSE).
 
-## Training Your Own Model
+---
 
-The repository includes a training script at [backend/src/train.py](backend/src/train.py). To train on custom data:
-
-1. Prepare your dataset with images and corresponding masks
-2. Place images in `backend/src/data/images/`
-3. Place masks in `backend/src/data/mask/`
-4. Run the training script:
-
-```bash
-cd backend
-python src/train.py
-```
-
-Training logs are saved to `backend/runs/` for visualization with TensorBoard.
-
-## Getting Help
-
-- **Issues**: Open an issue on [GitHub Issues](https://github.com/ObsCure9277/Background-Remover/issues)
-- **Discussions**: Ask questions in [GitHub Discussions](https://github.com/ObsCure9277/Background-Remover/discussions)
-- **API Documentation**: Visit `http://localhost:5000/docs` when running the backend
-
-## Maintainer
-
-**ObsCure9277** - [GitHub Profile](https://github.com/ObsCure9277)
-
-## Acknowledgments
+## 🙏 Acknowledgments
 
 - [U²-Net: Going Deeper with Nested U-Structure for Salient Object Detection](https://github.com/xuebinqin/U-2-Net) by Xuebin Qin et al.
-- FastAPI and React communities
-
-
+- The open source communities behind FastAPI, React, and PyTorch.
