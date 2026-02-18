@@ -13,6 +13,7 @@
 ## 📋 Table of Contents
 
 - [🔑 Key Features](#-key-features)
+- [💻 Tech Stack](#-tech-stack)
 - [🚀 Getting Started](#-getting-started)
 - [📂 Project Structure](#-project-structure)
 - [💡 Usage Examples](#-usage-examples)
@@ -43,6 +44,42 @@
 
 ### ✅ No API Keys Required
 - A completely self-hosted solution. No external API subscriptions, rate limits, or hidden costs.
+
+---
+
+## 💻 Tech Stack
+
+<table>
+  <tr>
+    <td>
+      <b>Frontend:</b>
+    </td>
+    <td>
+      <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" />
+      <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" />
+      <img src="https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <b>Backend:</b>
+    </td>
+    <td>
+      <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" />
+      <img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" />
+      <img src="https://img.shields.io/badge/uvicorn-%2320232a.svg?style=for-the-badge&logo=gunicorn&logoColor=%23D5A34E" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <b>AI / ML:</b>
+    </td>
+    <td>
+      <img src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white" />
+      <img src="https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white" />
+    </td>
+  </tr>
+</table>
 
 ---
 
