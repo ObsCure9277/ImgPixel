@@ -1,9 +1,5 @@
 # 🖼️ ImgPixel
 
-![Python](https://img.shields.io/badge/python-3.8%2B-blue)
-![React](https://img.shields.io/badge/react-19.2.0-blue)
-![TypeScript](https://img.shields.io/badge/typescript-4.9.5-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-latest-009688)
 
 **ImgPixel** is a powerful web application for AI-powered background removal using the U²-Net deep learning model. Built with React, TypeScript, and FastAPI, it offers a privacy-first solution where all image processing happens locally on your machine.
 
