@@ -37,9 +37,8 @@ const Export: React.FC<ExportProps> = ({
             className="select-input"
             disabled={disabled}
           >
-            <option value="png">PNG (transparent)</option>
-            <option value="jpg">JPG</option>
-            <option value="webp">WebP</option>
+            <option value="png">PNG</option>
+            <option value="webp">WebP </option>
           </select>
         </div>
 

@@ -1,0 +1,56 @@
+﻿============================================================
+STEP 1: Calling /api/remove-background
+============================================================
+  Response: {'success': True, 'master_file': 'fecc3ca1-7e24-44d8-9c16-741390e865ac_master.png', 'message': 'Background removed successfully'}
+
+  Downloaded master file: fecc3ca1-7e24-44d8-9c16-741390e865ac_master.png
+  [Master PNG] Mode: RGBA, Size: (200, 200)
+    Transparent (alpha=0):   29199 (73.0%)
+    Semi-transparent:        8449 (21.1%)
+    Opaque (alpha=255):      2352 (5.9%)
+    Corner pixel (0,0): RGBA=(np.uint8(255), np.uint8(0), np.uint8(0), np.uint8(0))
+    HAS TRANSPARENCY: YES
+
+============================================================
+STEP 2: Calling /api/prepare-download (format=png)
+============================================================
+  Response: {'success': True, 'output_file': '6f03d51d-33d3-4624-bbe2-2387e2e4dfc3_export.png', 'message': 'Image prepared for download'}
+
+  Downloaded PNG: 6f03d51d-33d3-4624-bbe2-2387e2e4dfc3_export.png
+  [Exported PNG] Mode: RGBA, Size: (200, 200)
+    Transparent (alpha=0):   29199 (73.0%)
+    Semi-transparent:        8449 (21.1%)
+    Opaque (alpha=255):      2352 (5.9%)
+    Corner pixel (0,0): RGBA=(np.uint8(255), np.uint8(0), np.uint8(0), np.uint8(0))
+    HAS TRANSPARENCY: YES
+
+============================================================
+STEP 3: Calling /api/prepare-download (format=webp)
+============================================================
+  Response: {'success': True, 'output_file': '06d9c963-e8dc-4ef3-9cd5-8d0dfaaf2bfb_export.webp', 'message': 'Image prepared for download'}
+
+  Downloaded WebP: 06d9c963-e8dc-4ef3-9cd5-8d0dfaaf2bfb_export.webp
+  WebP raw mode from file: RGBA
+  [Exported WebP] Mode: RGBA, Size: (200, 200)
+    Transparent (alpha=0):   29199 (73.0%)
+    Semi-transparent:        8449 (21.1%)
+    Opaque (alpha=255):      2352 (5.9%)
+    Corner pixel (0,0): RGBA=(np.uint8(0), np.uint8(0), np.uint8(0), np.uint8(0))
+    HAS TRANSPARENCY: YES
+
+============================================================
+STEP 4: Side-by-side Comparison
+============================================================
+  Alpha channel diff ù Max: 0, Mean: 0.00
+  Pixels with exact same alpha: 100.0%
+
+============================================================
+FILES SAVED FOR MANUAL INSPECTION:
+============================================================
+  D:\Coding\Project\1-ImgPixel\backend\debug_output\downloaded_export.png
+  D:\Coding\Project\1-ImgPixel\backend\debug_output\downloaded_export.webp
+  D:\Coding\Project\1-ImgPixel\backend\debug_output\downloaded_master.png
+  D:\Coding\Project\1-ImgPixel\backend\debug_output\test_input.png
+
+  TIP: Open the .webp file in Chrome/Edge to verify transparency
+       Windows Photo Viewer shows transparency as WHITE

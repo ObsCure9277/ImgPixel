@@ -11,7 +11,8 @@ from pathlib import Path
 # Add the src directory to Python path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from background_removal import remove_background
+from background_removal import generate_mask, apply_mask, resize_and_format
+from PIL import Image
 
 app = FastAPI(title="Background Remover API")
 
@@ -58,23 +59,17 @@ async def health_check():
 
 @app.post("/api/remove-background")
 async def api_remove_background(
-    file: UploadFile = File(...),
-    resolution: str = Form("original")
+    file: UploadFile = File(...)
 ):
     """
-    Remove background from uploaded image
-
-    - **file**: Image file (png, jpg, jpeg, gif, bmp, webp)
-    - **resolution**: Output resolution (original, hd, fullhd, 4k)
+    Step 1: Perform AI inference and create a high-res transparent "master" PNG
     """
     input_path = None
-    output_path = None
+    master_path = None
 
     try:
-        print(f"\n=== New background removal request ===")
+        print(f"\n=== Background Removal (Inference Phase) ===")
         print(f"Filename: {file.filename}")
-        print(f"Content-Type: {file.content_type}")
-        print(f"Resolution: {resolution}")
 
         # Validate file type
         allowed_extensions = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"}
@@ -86,81 +81,81 @@ async def api_remove_background(
                 detail=f"Invalid file type: {file_ext}. Allowed: {', '.join(allowed_extensions)}"
             )
 
-        # Generate unique filenames
         unique_id = str(uuid.uuid4())
         input_filename = f"{unique_id}_input{file_ext}"
-        output_filename = f"{unique_id}_output.png"
+        master_filename = f"{unique_id}_master.png"
 
         input_path = UPLOAD_DIR / input_filename
-        output_path = OUTPUT_DIR / output_filename
+        master_path = OUTPUT_DIR / master_filename
 
         # Save uploaded file
-        print(f"Saving uploaded file to {input_path}")
         with open(input_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-
-        file_size_mb = input_path.stat().st_size / (1024 * 1024)
-        print(f"File saved successfully ({file_size_mb:.2f} MB)")
 
         # Check if model exists
         model_path = MODELS_DIR / "u2net.pth"
         if not model_path.exists():
-            print(f"ERROR: Model not found at {model_path}")
-            input_path.unlink(missing_ok=True)
-            raise HTTPException(
-                status_code=500,
-                detail="Model file not found. Please wait for model download or contact support."
-            )
+            raise HTTPException(status_code=500, detail="Model file not found.")
 
-        print(f"Model found at {model_path}")
-
-        # Process the image
-        print("Starting background removal process...")
-        remove_background(
-            str(input_path),
-            str(output_path),
-            resolution=resolution,
-            model_path=str(model_path)
-        )
-
-        # Verify output was created
-        if not output_path.exists():
-            raise Exception("Output file was not created")
-
-        output_size_mb = output_path.stat().st_size / (1024 * 1024)
-        print(f"Output file created successfully ({output_size_mb:.2f} MB)")
+        # Process: Inference -> Apply Mask -> Save Master
+        print("Starting AI inference...")
+        mask = generate_mask(str(input_path), str(model_path))
+        print("Applying mask...")
+        master_image = apply_mask(str(input_path), mask)
+        master_image.save(master_path, format="PNG")
 
         # Clean up input file
         input_path.unlink(missing_ok=True)
-        print(f"Input file cleaned up")
 
-        print(f"=== Request completed successfully ===\n")
         return {
             "success": True,
-            "output_file": output_filename,
+            "master_file": master_filename,
             "message": "Background removed successfully"
         }
 
-    except HTTPException:
-        # Re-raise HTTP exceptions
-        raise
     except Exception as e:
-        print(f"ERROR: {type(e).__name__}: {str(e)}")
-        import traceback
-        traceback.print_exc()
+        print(f"ERROR during inference: {str(e)}")
+        if input_path and input_path.exists(): input_path.unlink()
+        raise HTTPException(status_code=500, detail=str(e))
 
-        # Clean up on error
-        if input_path and input_path.exists():
-            input_path.unlink(missing_ok=True)
-            print("Cleaned up input file after error")
-        if output_path and output_path.exists():
-            output_path.unlink(missing_ok=True)
-            print("Cleaned up output file after error")
+@app.post("/api/prepare-download")
+async def api_prepare_download(
+    master_file: str = Form(...),
+    resolution: str = Form("original"),
+    format: str = Form("png")
+):
+    """
+    Step 2: Resize and Format the master image for download
+    """
+    try:
+        master_path = OUTPUT_DIR / master_file
+        if not master_path.exists():
+            raise HTTPException(status_code=404, detail="Master file not found")
 
-        raise HTTPException(
-            status_code=500,
-            detail=f"Background removal failed: {str(e)}"
-        )
+        # Load master image — force RGBA to preserve transparency
+        img = Image.open(master_path).convert('RGBA')
+        
+        # Post-process
+        processed_img, save_format = resize_and_format(img, resolution, format)
+        
+        # Generate unique output filename
+        unique_id = str(uuid.uuid4())
+        out_ext = format.lower()
+        if out_ext not in ["png", "webp"]: out_ext = "png"
+        output_filename = f"{unique_id}_export.{out_ext}"
+        output_path = OUTPUT_DIR / output_filename
+        
+        processed_img.save(output_path, format=save_format)
+        
+        return {
+            "success": True,
+            "output_file": output_filename,
+            "message": "Image prepared for download"
+        }
+    except Exception as e:
+        print(f"ERROR during export: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/api/download/{filename}")
 async def download_file(filename: str):
@@ -170,10 +165,20 @@ async def download_file(filename: str):
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
 
+    # Determine media type from extension
+    ext = file_path.suffix.lower()
+    media_types = {
+        ".png": "image/png",
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".webp": "image/webp"
+    }
+    media_type = media_types.get(ext, "image/png")
+
     return FileResponse(
         path=file_path,
         filename=filename,
-        media_type="image/png"
+        media_type=media_type
     )
 
 @app.delete("/api/cleanup/{filename}")

@@ -17,6 +17,7 @@ function App() {
   const [processedImageUrl, setProcessedImageUrl] = useState<string | null>(null);
   const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
   const [processedFilename, setProcessedFilename] = useState<string | null>(null);
+  const [masterFilename, setMasterFilename] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +38,7 @@ function App() {
     setProcessedImageUrl(null);
     setOriginalImageUrl(null);
     setProcessedFilename(null);
+    setMasterFilename(null);
     setError(null);
   };
 
@@ -47,6 +49,7 @@ function App() {
     setFile(file);
     setProcessedImageUrl(null);
     setProcessedFilename(null);
+    setMasterFilename(null);
     setError(null);
   };
 
@@ -62,7 +65,6 @@ function App() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("resolution", exportOptions.resolution);
 
       const response = await fetch(`${API_BASE_URL}/api/remove-background`, {
         method: "POST",
@@ -74,11 +76,11 @@ function App() {
       }
 
       const result = await response.json();
-      setProcessedFilename(result.output_file);
+      setMasterFilename(result.master_file);
 
-      // Set the processed image URL for preview
-      const processedUrl = `${API_BASE_URL}/api/download/${result.output_file}`;
-      setProcessedImageUrl(processedUrl);
+      // Set the processed image URL for preview (using master)
+      const masterUrl = `${API_BASE_URL}/api/download/${result.master_file}`;
+      setProcessedImageUrl(masterUrl);
     } catch (err: unknown) {
       console.error("Background removal failed:", err);
       setError("Background removal failed. Please try again.");
@@ -88,22 +90,46 @@ function App() {
 
   // Download the processed image
   const handleDownloadImage = async () => {
-    if (!processedFilename) {
+    if (!masterFilename) {
       setError("Please process an image first.");
       return;
     }
+    setProcessing(true);
 
     try {
-      const downloadUrl = `${API_BASE_URL}/api/download/${processedFilename}`;
+      // Step 2: Prepare the download with selected options
+      const formData = new FormData();
+      formData.append("master_file", masterFilename);
+      formData.append("resolution", exportOptions.resolution);
+      formData.append("format", exportOptions.format);
+
+      const prepareResponse = await fetch(`${API_BASE_URL}/api/prepare-download`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!prepareResponse.ok) {
+        throw new Error("Failed to prepare image for download");
+      }
+
+      const { output_file } = await prepareResponse.json();
+      
+      // Step 3: Trigger the actual download
+      const downloadUrl = `${API_BASE_URL}/api/download/${output_file}`;
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.download = `processed_image_${exportOptions.resolution}.png`;
+      
+      const ext = exportOptions.format.toLowerCase();
+      link.download = `processed_image_${exportOptions.resolution}.${ext}`;
+      
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (err) {
       console.error("Error downloading image:", err);
       setError("Failed to download the image. Please try again.");
+    } finally {
+      setProcessing(false);
     }
   };
 

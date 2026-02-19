@@ -4,17 +4,11 @@ import numpy as np
 from u2net_model import U2NET
 import os
 
-def remove_background(input_path, output_path, resolution="original", model_path="models/u2net.pth"):
-    """Remove background from image using U2-Net model"""
-    print(f"Starting background removal for {input_path}")
-    print(f"Model path: {model_path}")
-    print(f"Resolution: {resolution}")
-
+def get_model_and_device(model_path="models/u2net.pth"):
+    """Initialize model and device"""
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"Using device: {device}")
-
-    # Load model
     net = U2NET(3, 1)
+    
     try:
         # Try loading with weights_only=False for compatibility
         state_dict = torch.load(model_path, map_location=device, weights_only=False)
@@ -26,44 +20,66 @@ def remove_background(input_path, output_path, resolution="original", model_path
 
     net.to(device)
     net.eval()
-    print("Model loaded successfully")
+    return net, device
 
+def generate_mask(input_path, model_path="models/u2net.pth"):
+    """Perform AI inference to generate the background mask"""
+    net, device = get_model_and_device(model_path)
+    
     image = Image.open(input_path).convert('RGB')
     orig_size = image.size
 
     # Preprocess
-    image = image.resize((320, 320))
-    img_np = np.array(image).astype(np.float32) / 255.0
+    image_resized = image.resize((320, 320))
+    img_np = np.array(image_resized).astype(np.float32) / 255.0
     img_np = img_np.transpose((2, 0, 1))
     img_tensor = torch.from_numpy(img_np).unsqueeze(0).to(device)
 
     # Predict mask
     with torch.no_grad():
         d1, *_ = net(img_tensor)
+    
     pred = d1[:, 0, :, :].cpu().numpy()[0]
     pred = (pred - pred.min()) / (pred.max() - pred.min())
     mask = Image.fromarray((pred * 255).astype(np.uint8)).resize(orig_size, Image.LANCZOS)
+    return mask
 
-    # Apply mask to original image
-    image = Image.open(input_path).convert('RGBA')
+def apply_mask(input_path, mask):
+    """Apply the mask to the original image to create a transparent PNG"""
+    image_rgba = Image.open(input_path).convert('RGBA')
     mask_np = np.array(mask) / 255.0
-    img_np = np.array(image)
+    img_np = np.array(image_rgba)
     img_np[..., 3] = (mask_np * 255).astype(np.uint8)
-    result = Image.fromarray(img_np, 'RGBA')
+    return Image.fromarray(img_np, 'RGBA')
 
+def resize_and_format(image, resolution="original", export_format="png"):
+    """Resize based on resolution and orientation, then apply selected format"""
+    # Ensure RGBA mode so transparency is always available
+    result = image.convert('RGBA')
+    
     # Resize the result based on the selected resolution
     if resolution != "original":
-        if resolution == "hd":
-            target_width, target_height = 1280, 720
-        elif resolution == "fullhd":
-            target_width, target_height = 1920, 1080
-        elif resolution == "4k":
-            target_width, target_height = 3840, 2160
-        else:
-            raise ValueError(f"Unsupported resolution: {resolution}")
+        # Standard resolutions (landscape)
+        resolutions = {
+            "hd": (1280, 720),
+            "fullhd": (1920, 1080),
+            "4k": (3840, 2160)
+        }
 
-        # Preserve aspect ratio
+        if resolution not in resolutions:
+            target_width, target_height = 1280, 720 # Default to HD if unknown
+        else:
+            target_width, target_height = resolutions[resolution]
+            
         orig_width, orig_height = result.size
+        
+        # Determine orientation
+        is_portrait = orig_height > orig_width
+        
+        # If portrait, swap target dimensions
+        if is_portrait:
+            target_width, target_height = target_height, target_width
+
         aspect_ratio = orig_width / orig_height
 
         if target_width / target_height > aspect_ratio:
@@ -74,10 +90,22 @@ def remove_background(input_path, output_path, resolution="original", model_path
             target_height = int(target_width / aspect_ratio)
 
         new_size = (target_width, target_height)
-        print(f"Resizing image to resolution: {resolution}, size: {new_size}")
         result = result.resize(new_size, Image.LANCZOS)
 
-    # Save result
-    result.save(output_path)
-    print(f"Background removed successfully. Output saved to {output_path}")
+    # Handle export format
+    export_format = export_format.lower()
+    
+    if export_format == "webp":
+        save_format = "WEBP"
+    else:
+        save_format = "PNG"
+    
+    return result, save_format
+
+def remove_background(input_path, output_path, resolution="original", export_format="png", model_path="models/u2net.pth"):
+    """Legacy wrapper for backward compatibility"""
+    mask = generate_mask(input_path, model_path)
+    master = apply_mask(input_path, mask)
+    final_image, save_format = resize_and_format(master, resolution, export_format)
+    final_image.save(output_path, format=save_format)
     return output_path
